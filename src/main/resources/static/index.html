@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tarefas</title>
+  </head>
+  <body>
+    <ul id="tarefas">
+      <!--
+        <li>
+          Descrição da tarefa
+          <a onclick="detalhar(999)">(detalhar)</a>
+        </li>
+      -->
+    </ul>
+    <form id="formulario" onsubmit="event.preventDefault(); cadastrar()">
+      <input name="descricao">
+      <button>Cadastrar</button>
+    </form>
+    <div id="detalhes">
+      <!--
+        <h1>Tarefa 999</h1>
+        <p>Descrição da tarefa</p>
+        <p>Cadastrada em 31/12/2000 às 10:30</p>
+      -->
+    </div>
+    <script src="fetch.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
