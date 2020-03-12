@@ -8,6 +8,7 @@ import com.quasarconsultoria.jwtspringsec.model.UsuariosRepository;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,8 +27,9 @@ class TarefasController {
     }
 
     @GetMapping
-    List<TarefaDTO> buscarTodas(HttpSession session) {
-        Usuario usuario = getUsuarioLogado(session);
+    List<TarefaDTO> buscarTodas(Principal principal) {
+        String loginDoUsuario = principal.getName();
+        Usuario usuario = this.usuariosRepository.findByLogin(loginDoUsuario).get();
         return this.tarefasRepository
                 .findByUsuario(usuario).stream()
                 .map(TarefaDTO::new)
@@ -35,18 +37,20 @@ class TarefasController {
     }
 
     @GetMapping("/{id}")
-    TarefaDetalhadaDTO buscarPorId(@PathVariable("id") Integer id, HttpSession session) {
+    TarefaDetalhadaDTO buscarPorId(@PathVariable("id") Integer id, Principal principal) {
+        String loginDoUsuario = principal.getName();
+        Usuario usuario = this.usuariosRepository.findByLogin(loginDoUsuario).get();
         Tarefa tarefa = this.tarefasRepository.findById(id).get();
-        Integer idUsuarioLogado = (Integer)session.getAttribute("idUsuarioLogado");
-        if (!tarefa.getUsuario().getId().equals(idUsuarioLogado)) {
+        if (!tarefa.getUsuario().getId().equals(usuario.getId())) {
             throw new AcessoNegadoException();
         }
         return new TarefaDetalhadaDTO(tarefa);
     }
 
     @PostMapping
-    void cadastrar(@RequestBody NovaTarefaDTO tarefa, HttpSession session) {
-        Usuario usuario = getUsuarioLogado(session);
+    void cadastrar(@RequestBody NovaTarefaDTO tarefa, Principal principal) {
+        String loginDoUsuario = principal.getName();
+        Usuario usuario = this.usuariosRepository.findByLogin(loginDoUsuario).get();
         Tarefa entidade = new Tarefa();
         entidade.setUsuario(usuario);
         entidade.setDescricao(tarefa.getDescricao());
